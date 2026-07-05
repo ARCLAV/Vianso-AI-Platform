@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Image Analyzer</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#eef3fb;
+    padding:40px;
+    transition:.3s;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.hero{
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+    color:white;
+    padding:35px;
+    border-radius:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    box-shadow:0 15px 35px rgba(37,99,235,.25);
+}
+
+.hero h1{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.hero p{
+    opacity:.9;
+}
+
+.dark-btn{
+    border:none;
+    background:rgba(255,255,255,.2);
+    color:white;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.card{
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(15px);
+    border-radius:25px;
+    padding:30px;
+    margin-bottom:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+.upload-zone{
+    border:2px dashed #cbd5e1;
+    border-radius:20px;
+    padding:50px;
+    text-align:center;
+    transition:.3s;
+}
+
+.upload-zone:hover{
+    border-color:#2563eb;
+    background:#f8fbff;
+}
+
+.upload-zone input{
+    display:none;
+}
+
+.upload-zone label{
+    cursor:pointer;
+    display:block;
+}
+
+.upload-icon{
+    font-size:60px;
+    margin-bottom:15px;
+}
+
+.upload-zone h3{
+    color:#1e293b;
+    margin-bottom:10px;
+}
+
+.upload-zone p{
+    color:#64748b;
+}
+
+.select-box{
+    margin-top:25px;
+}
+
+.select-box label{
+    display:block;
+    margin-bottom:10px;
+    color:#1e293b;
+    font-weight:600;
+}
+
+.select-box select{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    font-size:15px;
+    outline:none;
+}
+
+.analyze-btn{
+    width:100%;
+    margin-top:25px;
+    border:none;
+    padding:16px;
+    border-radius:15px;
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.analyze-btn:hover{
+    transform:translateY(-2px);
+}
+
+.result-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.result-header h2{
+    color:#1e293b;
+}
+
+.action-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.action-buttons button{
+    border:none;
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+}
+
+.result-text{
+    line-height:1.8;
+    color:#334155;
+    white-space:pre-wrap;
+}
+
+body.dark{
+    background:#0f172a;
+}
+
+body.dark .card{
+    background:#1e293bcc;
+    color:white;
+}
+
+body.dark .upload-zone{
+    border-color:#475569;
+}
+
+body.dark .upload-zone h3,
+body.dark .select-box label,
+body.dark .result-header h2{
+    color:white;
+}
+
+body.dark .upload-zone p,
+body.dark .result-text{
+    color:#cbd5e1;
+}
+
+body.dark select{
+    background:#334155;
+    color:white;
+    border:none;
+}
+
+@media(max-width:768px){
+
+.hero{
+    flex-direction:column;
+    text-align:center;
+    gap:20px;
+}
+
+body{
+    padding:20px;
+}
+
+.upload-zone{
+    padding:30px;
+}
+
+}
+.image-result{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.image-result img{
+    max-width:100%;
+    max-height:450px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+.upload-zone.dragover{
+    border-color:#2563eb;
+    background:#eff6ff;
+}
+
+#previewImage{
+    object-fit:contain;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+
+        <div>
+            <h1>AI Image Analyzer</h1>
+            <p>
+                Upload an image and get AI-powered insights instantly.
+            </p>
+        </div>
+
+        <button
+            class="dark-btn"
+            id="darkToggle">
+            🌙
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <form
+            method="POST"
+            enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="upload-zone">
+
+    <input
+        type="file"
+        name="image"
+        id="imageInput"
+        accept="image/*"
+        required>
+
+    <label for="imageInput">
+
+        <div class="upload-icon">
+            📤
+        </div>
+
+        <h3>
+            Drag & Drop Image
+        </h3>
+
+        <p>
+            Click here to upload
+            <br>
+            JPG, PNG, WEBP Supported
+        </p>
+
+    </label>
+
+    <img
+        id="previewImage"
+        style="
+        display:none;
+        max-width:100%;
+        max-height:300px;
+        margin-top:20px;
+        border-radius:15px;
+        box-shadow:0 8px 20px rgba(0,0,0,.15);
+        ">
+
+</div>
+
+            <div class="select-box">
+
+                <label>
+                    Output Language
+                </label>
+
+                <select name="language">
+
+    <option value="English">English</option>
+
+    <option value="Malayalam">Malayalam</option>
+
+    <option value="Hindi">Hindi</option>
+
+    <option value="Tamil">Tamil</option>
+
+    <option value="Telugu">Telugu</option>
+
+    <option value="Kannada">Kannada</option>
+
+    <option value="Arabic">Arabic</option>
+
+    <option value="French">French</option>
+
+    <option value="German">German</option>
+
+    <option value="Spanish">Spanish</option>
+
+</select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="analyze-btn">
+
+                Analyze Image
+
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if result %}
+
+    <div class="card">
+
+        <div class="result-header">
+
+            <h2>
+                Analysis Result
+            </h2>
+
+            <div class="action-buttons">
+
+                <button
+                    type="button"
+                    id="copyBtn">
+
+                    Copy
+
+                </button>
+
+                <button
+                    type="button"
+                    id="downloadBtn">
+
+                    Download
+
+                </button>
+
+            </div>
+
+        </div>
+        {% if uploaded_image %}
+
+<div class="image-result">
+
+    <img
+        src="{{ uploaded_image }}"
+        alt="Uploaded Image">
+
+</div>
+
+{% endif %}
+        <div
+            class="result-text"
+            id="resultText">
+
+            {{ result }}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+document
+.getElementById("darkToggle")
+.addEventListener(
+"click",
+function(){
+
+document.body
+.classList.toggle("dark");
+
+});
+
+const copyBtn =
+document.getElementById("copyBtn");
+
+if(copyBtn){
+
+copyBtn.addEventListener(
+"click",
+function(){
+
+navigator.clipboard.writeText(
+document.getElementById("resultText").innerText
+);
+
+alert("Copied!");
+
+});
+
+}
+
+const downloadBtn =
+document.getElementById("downloadBtn");
+
+if(downloadBtn){
+
+downloadBtn.addEventListener(
+"click",
+function(){
+
+const result =
+document.getElementById("resultText")
+.innerText;
+
+const image =
+document.querySelector(
+".image-result img"
+);
+
+const html =
+`
+<html>
+<body>
+
+<h2>Image Analysis Result</h2>
+
+${image ? `<img src="${image.src}" style="max-width:500px;">` : ''}
+
+<hr>
+
+<p>${result}</p>
+
+</body>
+</html>
+`;
+
+const blob =
+new Blob(
+[html],
+{type:"text/html"}
+);
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download =
+"image_analysis.html";
+
+a.click();
+
+});
+
+}
+
+const uploadZone =
+document.querySelector(".upload-zone");
+
+uploadZone.addEventListener(
+"dragover",
+function(e){
+
+e.preventDefault();
+
+uploadZone.style.borderColor =
+"#2563eb";
+
+});
+
+uploadZone.addEventListener(
+"drop",
+function(e){
+
+e.preventDefault();
+
+const files =
+e.dataTransfer.files;
+
+if(files.length){
+
+imageInput.files =
+files;
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(event){
+
+previewImage.src =
+event.target.result;
+
+previewImage.style.display =
+"block";
+
+};
+
+reader.readAsDataURL(files[0]);
+
+}
+
+});
+</script>
+
+</body>
+</html>

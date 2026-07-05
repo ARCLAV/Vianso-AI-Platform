@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech To Text</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+       body{
+    margin:0;
+    min-height:100vh;
+    font-family:Segoe UI,Arial;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+    color:white;
+
+    background:linear-gradient(
+        -45deg,
+        #001f54,
+        #003566,
+        #004e92,
+        #00509d
+    );
+
+    background-size:400% 400%;
+    animation:gradientMove 12s ease infinite;
+}
+
+     .box{
+    width:100%;
+    max-width:750px;
+    padding:35px;
+    border-radius:30px;
+
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(25px);
+ border:1px solid rgba(0,80,157,.4);
+
+    box-shadow:
+        0 0 25px rgba(0,80,157,.35),
+        0 0 50px rgba(0,80,157,.20);
+
+    text-align:center;
+    position:relative;
+    margin:auto;
+
+    animation:floatBox 4s ease-in-out infinite;
+}
+
+@keyframes floatBox{
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-10px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+}
+ .box::after{
+    content:'';
+
+    position:absolute;
+
+    width:250px;
+    height:250px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(0,217,245,.18),
+        transparent 70%
+    );
+
+    animation:pulseCore 3s infinite;
+
+    z-index:-1;
+}
+
+@keyframes pulseCore{
+    0%{
+        transform:translate(-50%,-50%) scale(1);
+    }
+
+    50%{
+        transform:translate(-50%,-50%) scale(1.2);
+    }
+
+    100%{
+        transform:translate(-50%,-50%) scale(1);
+    }
+}
+
+        .section {
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        input, select {
+            margin: 15px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            font-size: 15px;
+        }
+
+     button{
+    padding:14px 28px;
+    margin:10px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,#00f5a0,#00d9f5);
+    color:#06283d;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+
+    position:relative;
+    overflow:hidden;
+}
+
+button:hover{
+    transform:translateY(-4px) scale(1.05);
+    box-shadow:0 0 25px #00d9f5;
+}
+
+button::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:60%;
+    height:100%;
+    background:rgba(255,255,255,0.4);
+    transform:skewX(-25deg);
+    transition:0.6s;
+}
+
+button:hover::before{
+    left:130%;
+}
+.result {
+    margin-top: 18px;
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-left: 5px solid #00f5a0;
+    box-shadow: 0 0 15px rgba(0,245,160,.4);
+
+    width: 90%;
+    max-width: 800px;
+
+    height: 200px;      /* Fixed height */
+    overflow-y: auto;   /* Vertical scrollbar */
+    overflow-x: hidden; /* No horizontal scrollbar */
+
+    text-align: left;
+}
+
+.result p {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.6;
+}
+        .error {
+            color: #ffd1d1;
+            background: rgba(255,0,0,0.25);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .wave {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 18px;
+        }
+
+        .wave span {
+            width: 6px;
+            height: 25px;
+            background: #00f5a0;
+            border-radius: 10px;
+            animation: wave 1s infinite ease-in-out;
+        }
+.ai-bg{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0,80,157,.25),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #001233,
+            #001f54,
+            #003566,
+            #004e92
+        );
+}
+
+.ai-bg::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background-image:
+        linear-gradient(rgba(0,80,157,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,80,157,.10) 1px, transparent 1px);
+
+    background-size:45px 45px;
+
+    animation:gridMove 12s linear infinite;
+}
+
+.ai-bg::after{
+    content:"";
+    position:absolute;
+    width:180%;
+    height:180%;
+    left:-40%;
+    top:-40%;
+
+    background:conic-gradient(
+        from 0deg,
+        transparent,
+        rgba(0,80,157,.15),
+        transparent,
+        rgba(0,53,102,.20),
+        transparent
+    );
+
+    animation:rotateScan 14s linear infinite;
+}
+
+.ai-bg span{
+    position:absolute;
+    left:50%;
+    top:50%;
+
+    border:2px solid rgba(0,80,157,.35);
+
+    border-radius:50%;
+
+    transform:translate(-50%,-50%);
+
+    animation:voicePulse 4s linear infinite;
+}
+
+.ai-bg span:nth-child(2){animation-delay:.7s;}
+.ai-bg span:nth-child(3){animation-delay:1.4s;}
+.ai-bg span:nth-child(4){animation-delay:2.1s;}
+.ai-bg span:nth-child(5){animation-delay:2.8s;}
+
+@keyframes voicePulse{
+    0%{
+        width:80px;
+        height:80px;
+        opacity:.8;
+    }
+    100%{
+        width:900px;
+        height:900px;
+        opacity:0;
+    }
+}
+
+.main-title{
+    font-size:42px;
+    font-weight:800;
+
+    background:linear-gradient(
+        90deg,
+        #4dabff,
+        #74c0fc,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+        
+/* Main dropdown box */
+.select2-container--default .select2-selection--single {
+    background: #ffffff !important;
+    color: #000 !important;
+    height: 45px;
+    border-radius: 10px;
+    border: none;
+}
+
+
+.typing {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.6;
+    border-right: none;
+    animation: none;
+}
+
+
+@keyframes typing{
+    from{width:0}
+    to{width:100%}
+}
+
+/* Selected text */
+.select2-selection__rendered {
+    color: #000 !important;
+    line-height: 45px !important;
+    font-weight: 600;
+}
+
+/* Search box inside dropdown */
+.select2-search__field {
+    color: #000 !important;
+    background: #cbc2c2 !important;
+}
+
+/* Dropdown background */
+.select2-dropdown {
+    background: #ededed !important;
+    color: #000 !important;
+}
+
+/* All options */
+.select2-results__option {
+    color: #000 !important;
+    background: #ddbc83 !important;
+}
+
+/* Hover option */
+.select2-results__option--highlighted {
+    background: #6d370b !important;
+    color: #000 !important;
+}
+
+/* Selected option */
+.select2-results__option[aria-selected=true] {
+    background: #e38839 !important;
+    color: #000 !important;
+}  
+
+.recording{
+    color:#00f5a0;
+    font-weight:bold;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    0%{opacity:.5;}
+    50%{opacity:1;}
+    100%{opacity:.5;}
+}
+        .wave span:nth-child(2) { animation-delay: 0.1s; }
+        .wave span:nth-child(3) { animation-delay: 0.2s; }
+        .wave span:nth-child(4) { animation-delay: 0.3s; }
+        .wave span:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { height: 15px; }
+            50% { height: 45px; }
+        }
+
+        @media(max-width: 600px) {
+            .box {
+                padding: 22px;
+            }
+
+            button {
+                width: 90%;
+            }
+        }
+        @keyframes gradientMove {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+.logo-area{
+    font-size:70px;
+    margin-bottom:10px;
+    animation: float 4s infinite;
+}
+
+.subtitle{
+    color:rgba(255,255,255,.8);
+    margin-top:-10px;
+    margin-bottom:25px;
+    font-size:16px;
+}
+
+
+.mic-pulse{
+    width:18px;
+    height:18px;
+    background:#ff3b3b;
+    border-radius:50%;
+    margin:12px auto;
+    display:none;
+    animation:pulseRing 1s infinite;
+}
+
+@keyframes pulseRing{
+    0%{box-shadow:0 0 0 0 rgba(255,59,59,.8);}
+    100%{box-shadow:0 0 0 20px rgba(255,59,59,0);}
+}
+
+
+.drop-zone{
+    border:2px dashed #00d9f5;
+    padding:35px;
+    border-radius:18px;
+    margin:20px auto;
+    width:80%;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    cursor:pointer;
+    background:rgba(255,255,255,.08);
+    transition:.3s;
+}
+
+.drop-zone:hover{
+    background:rgba(0,217,245,.15);
+    transform:scale(1.03);
+    box-shadow:0 0 20px rgba(0,217,245,.4);
+}
+
+.drop-zone span{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.drop-zone small{
+    color:rgba(255,255,255,.75);
+}
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#0f2027;
+}
+
+::-webkit-scrollbar-thumb{
+    background:linear-gradient(#00f5a0,#00d9f5);
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#00f5a0;
+}
+
+
+.stats{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+}
+
+.card{
+    min-width:140px;
+
+    padding:18px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+
+    transition:all .4s ease;
+
+    cursor:pointer;
+
+    font-size:24px;
+}
+
+.card span{
+    display:block;
+    margin-top:10px;
+    font-size:14px;
+    color:white;
+    font-weight:600;
+}
+
+.card:hover{
+
+    transform:
+    translateY(-8px)
+    scale(1.05);
+
+    box-shadow:
+    0 0 25px rgba(0,217,245,.5);
+
+    border-color:#00d9f5;
+}
+
+.card{
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:'';
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:100%;
+
+    background:
+    linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.2),
+        transparent
+    );
+
+    transition:.8s;
+}
+
+.card:hover::before{
+    left:100%;
+}
+
+
+    </style>
+</head>
+
+<body>
+   
+<div class="ai-bg">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="box">
+
+   <div class="logo-area">
+    🎙️
+</div>
+
+<h1 class="main-title">Speech To Text Converter</h1>
+
+<p class="subtitle">
+Convert speech into text in 30+ languages
+</p>
+
+<div class="stats">
+
+    <div class="card">
+        🌍 <br>
+        <span>30+ Languages</span>
+    </div>
+
+    <div class="card">
+        🎙️ <br>
+        <span>Live Recording</span>
+    </div>
+
+    <div class="card">
+        ⚡ <br>
+        <span>Fast Convert</span>
+    </div>
+
+</div>
+    <p>Select language before converting</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <div class="section">
+        <h2>Upload Audio</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <input type="hidden" name="source" value="upload">
+
+<select id="uploadLanguage" name="language" required>
+    <option value="auto">Auto Detect</option>
+    <option value="ar">Arabic</option>
+    <option value="as">Assamese</option>
+    <option value="bn">Bengali</option>
+    <option value="zh">Chinese</option>
+    <option value="nl">Dutch</option>
+    <option value="en">English</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="gu">Gujarati</option>
+    <option value="hi">Hindi</option>
+    <option value="it">Italian</option>
+    <option value="ja">Japanese</option>
+    <option value="kn">Kannada</option>
+    <option value="ko">Korean</option>
+    <option value="ml">Malayalam</option>
+    <option value="mr">Marathi</option>
+    <option value="ne">Nepali</option>
+    <option value="or">Odia</option>
+    <option value="pa">Punjabi</option>
+    <option value="pt">Portuguese</option>
+    <option value="ru">Russian</option>
+    <option value="si">Sinhala</option>
+    <option value="es">Spanish</option>
+    <option value="ta">Tamil</option>
+    <option value="te">Telugu</option>
+    <option value="tr">Turkish</option>
+    <option value="ur">Urdu</option>
+</select>
+
+            <br>
+
+            <label class="drop-zone">
+    <span>🎧 Click to Upload Audio</span>
+    <small>MP3, WAV, WEBM supported</small>
+    <input type="file" name="audio" accept="audio/*" required hidden>
+</label>
+
+            <br>
+
+            <button type="submit">Upload & Convert</button>
+        </form>
+
+        {% if upload_transcript %}
+            <div class="result">
+                <h3>Uploaded Audio Text:</h3>
+               <p class="typing">{{ upload_transcript }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>Live Speech To Text</h2>
+
+    
+
+<select id="liveLanguage" name="language">
+    <option value="auto">Auto Detect</option>
+    <option value="ar">Arabic</option>
+    <option value="as">Assamese</option>
+    <option value="bn">Bengali</option>
+    <option value="zh">Chinese</option>
+    <option value="nl">Dutch</option>
+    <option value="en">English</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="gu">Gujarati</option>
+    <option value="hi">Hindi</option>
+    <option value="it">Italian</option>
+    <option value="ja">Japanese</option>
+    <option value="kn">Kannada</option>
+    <option value="ko">Korean</option>
+    <option value="ml">Malayalam</option>
+    <option value="mr">Marathi</option>
+    <option value="ne">Nepali</option>
+    <option value="or">Odia</option>
+    <option value="pa">Punjabi</option>
+    <option value="pt">Portuguese</option>
+    <option value="ru">Russian</option>
+    <option value="si">Sinhala</option>
+    <option value="es">Spanish</option>
+    <option value="ta">Tamil</option>
+    <option value="te">Telugu</option>
+    <option value="tr">Turkish</option>
+    <option value="ur">Urdu</option>
+</select>
+        <br>
+
+        <button type="button" onclick="startRecording()">Start Recording</button>
+        <button type="button" onclick="stopRecording()">Stop & Convert</button>
+
+        <p id="status"></p>
+        <div class="mic-pulse" id="micPulse"></div>
+        <div class="wave" id="wave">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <form id="liveAudioForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <input type="hidden" name="source" value="live">
+
+            <input type="hidden" id="hiddenLiveLanguage" name="language">
+
+            <input type="file" id="liveAudioInput" name="audio" hidden>
+        </form>
+
+        {% if live_transcript %}
+            <div class="result">
+                <h3>Live Speech Text:</h3>
+                <p class="typing">{{ live_transcript }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = function(event) {
+                audioChunks.push(event.data);
+            };
+        document.getElementById("status").classList.add("recording");
+            mediaRecorder.start();
+
+            document.getElementById("status").innerText = "Recording... Speak now";
+            document.getElementById("wave").style.display = "flex";
+            document.getElementById("micPulse").style.display = "block";
+        }
+        catch (error) {
+            document.getElementById("status").innerText = "Microphone permission denied";
+        }
+    }
+
+    function stopRecording() {
+        if (!mediaRecorder) {
+            document.getElementById("status").innerText = "Please start recording first";
+            return;
+        }
+    document.getElementById("status").classList.remove("recording");
+        mediaRecorder.stop();
+
+        document.getElementById("status").innerText = "Converting speech to text...";
+        document.getElementById("wave").style.display = "none";
+        document.getElementById("micPulse").style.display = "none";
+
+        mediaRecorder.onstop = function() {
+            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+
+            const audioFile = new File(
+                [audioBlob],
+                "live_audio.webm",
+                { type: "audio/webm" }
+            );
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(audioFile);
+
+            document.getElementById("liveAudioInput").files = dataTransfer.files;
+
+            document.getElementById("hiddenLiveLanguage").value =
+                document.getElementById("liveLanguage").value;
+
+            document.getElementById("liveAudioForm").submit();
+        };
+    }
+   
+</script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+    $('#uploadLanguage').select2({
+        placeholder: "Select Language"
+    });
+
+    $('#liveLanguage').select2({
+        placeholder: "Select Language"
+    });
+
+});
+</script>
+
+
+
+
+</body>
+</html>

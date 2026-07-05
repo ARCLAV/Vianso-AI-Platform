@@ -1,0 +1,463 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visanso Login</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:linear-gradient(120deg,#020617,#0f172a,#1e1b4b,#172554);
+    background-size:300% 300%;
+    animation:bgMove 8s ease infinite;
+}
+
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:
+        linear-gradient(90deg,transparent,rgba(56,189,248,.12),transparent),
+        linear-gradient(transparent,rgba(139,92,246,.12),transparent);
+    animation:linesMove 8s linear infinite;
+}
+
+@keyframes linesMove{
+    from{transform:translate(-30%,-30%) rotate(0deg);}
+    to{transform:translate(-30%,-30%) rotate(360deg);}
+}
+
+/* IMAGE ROBOT */
+.robot{
+    position:absolute;
+    left:-260px;
+    bottom:70px;
+    z-index:30;
+    pointer-events:none;
+    animation:robotFullAction 6.2s ease-in-out forwards;
+}
+
+.robot img{
+    width:150px;
+    height:auto;
+    animation:robotWalkEffect .35s infinite alternate;
+    transform-origin:bottom center;
+}
+
+@keyframes robotFullAction{
+    0%{
+        left:-260px;
+        bottom:70px;
+        opacity:1;
+        transform:scale(1);
+        z-index:30;
+    }
+
+    55%{
+        left:calc(50% - 75px);
+        bottom:70px;
+        opacity:1;
+        transform:scale(1);
+        z-index:30;
+    }
+
+    65%{
+        left:calc(50% - 75px);
+        bottom:90px;
+        opacity:1;
+        transform:scale(1.05);
+        z-index:30;
+    }
+
+    75%{
+        left:calc(50% - 75px);
+        bottom:70px;
+        opacity:1;
+        transform:scale(.85);
+        z-index:50;
+    }
+
+    90%{
+        left:calc(50% - 75px);
+        bottom:250px;
+        opacity:1;
+        transform:scale(.65);
+        z-index:50;
+    }
+
+    100%{
+        left:calc(50% - 75px);
+        bottom:250px;
+        opacity:0;
+        transform:scale(.2);
+        z-index:50;
+    }
+}
+
+@keyframes robotWalkEffect{
+    from{
+        transform:translateY(0) rotate(-5deg);
+    }
+
+    to{
+        transform:translateY(-12px) rotate(5deg);
+    }
+}
+/* touch flash */
+.touch{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#38bdf8;
+    transform:translate(-50%,-50%) scale(0);
+    animation:touchFlash .8s ease forwards;
+    animation-delay:3.6s;
+    z-index:40;
+    pointer-events:none;
+}
+@keyframes touchFlash{
+    0%{
+        transform:translate(-50%,-50%) scale(0);
+        opacity:1;
+    }
+
+    100%{
+        transform:translate(-50%,-50%) scale(28);
+        opacity:0;
+    }
+}
+/* login popup */
+.login-box{
+    width:400px;
+    padding:35px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.13);
+    backdrop-filter:blur(18px);
+    box-shadow:0 0 45px rgba(0,0,0,.55);
+    color:white;
+    opacity:0;
+    transform:scale(.4);
+    animation:popup .8s ease forwards;
+    animation-delay:4.1s;
+    z-index:100;
+    pointer-events:auto;
+}
+
+@keyframes popup{
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.login-box.close{
+    animation:closeBox .6s ease forwards;
+}
+
+@keyframes closeBox{
+    to{
+        opacity:0;
+        transform:scale(.5) translateY(-80px);
+    }
+}
+
+body.slide-left .login-box{
+    animation:slideLeft .75s ease forwards;
+}
+
+@keyframes slideLeft{
+    to{
+        transform:translateX(-130%) rotate(-5deg);
+        opacity:0;
+    }
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h1{
+    font-size:42px;
+    color:#38bdf8;
+}
+
+.logo p{
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+.input-box{
+    margin-bottom:18px;
+}
+
+.input-box input{
+    width:100%;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.18);
+    color:white;
+    font-size:15px;
+}
+
+.input-box input::placeholder{
+    color:#cbd5e1;
+}
+
+.password-box{
+    position:relative;
+}
+
+.eye{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+}
+
+.remember-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
+    margin-bottom:18px;
+    color:#cbd5e1;
+}
+
+.remember-row a{
+    color:#38bdf8;
+    text-decoration:none;
+}
+
+.login-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#38bdf8,#8b5cf6);
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.login-btn:hover{
+    box-shadow:0 0 22px #38bdf8;
+}
+
+.divider{
+    text-align:center;
+    margin:22px 0 15px;
+    color:#cbd5e1;
+}
+
+.social-icons{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+}
+
+.social-icons button{
+    width:48px;
+    height:48px;
+    border:none;
+    border-radius:50%;
+    background:white;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.social-icons button:hover{
+    transform:translateY(-4px) scale(1.08);
+    box-shadow:0 0 18px #38bdf8;
+}
+
+.register{
+    width:100%;
+    text-align:center;
+    margin-top:25px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:5px;
+    font-size:16px;
+}
+
+.register a{
+    display:inline-block;
+    margin-left:5px;
+    padding:8px 14px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#22c55e,#38bdf8);
+    color:#020617;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.register a:hover{
+    transform:scale(1.06);
+    box-shadow:0 0 15px #38bdf8;
+}
+
+.error{
+    color:#ffb4b4;
+    text-align:center;
+    margin-bottom:12px;
+}
+
+@media(max-width:480px){
+    .login-box{
+        width:90%;
+        padding:25px;
+    }
+.robot{
+    position:absolute;
+    left:-220px;
+    bottom:70px;
+    z-index:30;
+    animation:robotWalk 4s ease-in-out forwards;
+}
+
+.robot img{
+    width:130px;
+    height:auto;
+    animation:robotStep .45s infinite alternate;
+}
+
+@keyframes robotWalk{
+    0%{
+        left:-220px;
+    }
+    100%{
+        left:calc(50% - 300px);
+    }
+}
+
+@keyframes robotStep{
+    from{
+        transform:translateY(0) rotate(-2deg);
+    }
+    to{
+        transform:translateY(-10px) rotate(2deg);
+    }
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="robot">
+    <img src="{% static 'images/robot.png' %}" alt="Visanso Robot">
+</div>
+
+<div class="touch"></div>
+
+<div class="login-box" id="loginBox">
+
+    <div class="logo">
+        <h1>Vianso</h1>
+        <p>Text to Speech • Speech to Text • Image Analysis</p>
+    </div>
+
+    <form method="POST" id="loginForm">
+        {% csrf_token %}
+
+        <div class="input-box">
+            <input type="text" name="username" placeholder="Enter username" required>
+        </div>
+
+        <div class="input-box password-box">
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+            <span class="eye" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <div class="remember-row">
+            <label>
+                <input type="checkbox" name="remember">
+                Remember password
+            </label>
+
+            <a href="#" onclick="alert('Please contact administrator to reset password')">
+                Forgot?
+            </a>
+        </div>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <button class="login-btn" type="submit">Login to Vianso</button>
+    </form>
+
+    <div class="divider">or continue with</div>
+
+    <div class="social-icons">
+        <button type="button" onclick="alert('Google login is not connected yet')">G</button>
+        <button type="button" onclick="alert('GitHub login is not connected yet')">⚫</button>
+        <button type="button" onclick="alert('X login is not connected yet')">𝕏</button>
+        <button type="button" onclick="alert('Facebook login is not connected yet')">f</button>
+    </div>
+
+    <div class="register">
+        New to Vianso?
+        <a href="{% url 'register' %}" onclick="goRegister(event)">Create account</a>
+    </div>
+
+</div>
+
+<script>
+function togglePassword(){
+    let password = document.getElementById("password");
+
+    if(password.type === "password"){
+        password.type = "text";
+    }else{
+        password.type = "password";
+    }
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(){
+    document.getElementById("loginBox").classList.add("close");
+});
+
+function goRegister(event){
+    event.preventDefault();
+
+    document.body.classList.add("slide-left");
+
+    setTimeout(function(){
+        window.location.href = "{% url 'register' %}";
+    }, 750);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1110 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VIANSO AI Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#f4f7fc;
+color:#334155;
+display:flex;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+/* ======================
+SIDEBAR
+====================== */
+
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+width:80px;
+height:100vh;
+background:#ffffff;
+border-right:1px solid #e5e7eb;
+box-shadow:0 0 20px rgba(0,0,0,.04);
+overflow:hidden;
+transition:.4s;
+z-index:1000;
+}
+
+.sidebar.active{
+width:260px;
+}
+
+.logo-area{
+display:flex;
+align-items:center;
+gap:15px;
+padding:20px;
+cursor:pointer;
+}
+
+.logo img{
+width:45px;
+height:45px;
+border-radius:12px;
+}
+
+.logo-text{
+font-size:22px;
+font-weight:700;
+color:#4f46e5;
+opacity:0;
+width:0;
+overflow:hidden;
+transition:.3s;
+white-space:nowrap;
+}
+
+.sidebar.active .logo-text{
+opacity:1;
+width:170px;
+}
+
+.menu{
+margin-top:20px;
+}
+
+.menu a{
+display:flex;
+align-items:center;
+gap:20px;
+padding:16px 25px;
+text-decoration:none;
+color:#64748b;
+transition:.3s;
+}
+
+.menu a:hover{
+background:#eef2ff;
+color:#4f46e5;
+}
+
+.menu i{
+font-size:20px;
+min-width:25px;
+}
+
+.menu span{
+opacity:0;
+width:0;
+overflow:hidden;
+white-space:nowrap;
+transition:.3s;
+}
+
+.sidebar.active .menu span{
+opacity:1;
+width:180px;
+}
+
+/* ======================
+PROFILE
+====================== */
+
+.profile{
+position:absolute;
+bottom:20px;
+left:15px;
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.avatar{
+width:45px;
+height:45px;
+border-radius:50%;
+background:#6366f1;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+font-weight:600;
+}
+
+.profile-info{
+opacity:0;
+width:0;
+overflow:hidden;
+transition:.3s;
+white-space:nowrap;
+}
+
+.sidebar.active .profile-info{
+opacity:1;
+width:150px;
+}
+
+.profile-info h4{
+font-size:15px;
+color:#1e293b;
+}
+
+.profile-info p{
+font-size:13px;
+color:#64748b;
+}
+
+/* ======================
+MAIN
+====================== */
+
+.main{
+margin-left:80px;
+width:100%;
+padding:25px;
+transition:.4s;
+}
+
+/* ======================
+TOPBAR
+====================== */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.welcome h2{
+font-size:30px;
+color:#1e293b;
+}
+
+.welcome p{
+margin-top:5px;
+color:#64748b;
+}
+
+/* ======================
+USER MENU
+====================== */
+
+.user-menu{
+    position:relative;
+}
+
+.user-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:white;
+    padding:10px 18px;
+    border-radius:40px;
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+    cursor:pointer;
+}
+
+.user-box img{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+}
+
+.dropdown{
+    position:absolute;
+    right:0;
+
+    /* Move slightly up */
+    top:calc(100% - 5px);
+
+    width:200px;
+
+    background:white;
+    border-radius:15px;
+    box-shadow:0 15px 30px rgba(0,0,0,.08);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.2s;
+    overflow:hidden;
+    z-index:999;
+}
+
+.user-menu:hover .dropdown{
+    opacity:1;
+    visibility:visible;
+}
+
+.dropdown a{
+    display:block;
+    padding:15px;
+    text-decoration:none;
+    color:#475569;
+    border-bottom:1px solid #f1f5f9;
+    transition:0.2s;
+}
+
+.dropdown a:hover{
+    background:#eef2ff;
+}
+
+/* ======================
+HERO
+====================== */
+
+.hero{
+background:linear-gradient(
+135deg,
+#6366f1,
+#8b5cf6
+);
+
+border-radius:30px;
+
+padding:50px;
+
+color:white;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:30px;
+}
+
+.hero h1{
+font-size:52px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:18px;
+max-width:550px;
+line-height:1.7;
+}
+
+.hero-btn{
+display:inline-block;
+margin-top:25px;
+padding:14px 28px;
+background:white;
+color:#4f46e5;
+text-decoration:none;
+border-radius:12px;
+font-weight:600;
+}
+
+.hero-icon{
+font-size:120px;
+opacity:.25;
+}
+
+/* ======================
+STATS
+====================== */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:25px;
+}
+
+.stat-card{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+}
+
+.stat-card i{
+font-size:28px;
+color:#6366f1;
+margin-bottom:15px;
+}
+
+.stat-card h3{
+font-size:15px;
+color:#64748b;
+margin-bottom:10px;
+}
+
+.stat-card h2{
+font-size:34px;
+color:#1e293b;
+}
+
+/* ======================
+QUICK ACTIONS
+====================== */
+
+.quick-actions{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.action-btn{
+background:white;
+padding:18px;
+border-radius:15px;
+text-decoration:none;
+color:#334155;
+text-align:center;
+font-weight:600;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+transition:.3s;
+}
+
+.action-btn:hover{
+transform:translateY(-4px);
+background:#eef2ff;
+}
+/* ======================
+FEATURE GRID
+====================== */
+
+.feature-grid{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:25px;
+margin-bottom:30px;
+}
+
+.left-panel{
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.feature-card{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+transition:.3s;
+}
+
+.feature-card:hover{
+transform:translateY(-5px);
+}
+
+.feature-left{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.feature-icon{
+width:70px;
+height:70px;
+border-radius:18px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:28px;
+
+background:#eef2ff;
+color:#6366f1;
+}
+
+.feature-content h3{
+margin-bottom:8px;
+color:#1e293b;
+}
+
+.feature-content p{
+color:#64748b;
+}
+
+.open-btn{
+padding:12px 24px;
+border-radius:12px;
+text-decoration:none;
+background:#6366f1;
+color:white;
+font-weight:600;
+}
+
+/* ======================
+AI ASSISTANT CARD
+====================== */
+
+.assistant-card{
+background:white;
+border-radius:20px;
+padding:30px;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+height:100%;
+}
+
+.assistant-card h2{
+margin-bottom:15px;
+color:#1e293b;
+}
+
+.assistant-card p{
+color:#64748b;
+line-height:1.8;
+margin-bottom:25px;
+}
+
+.assistant-btn{
+display:inline-block;
+padding:14px 25px;
+background:#6366f1;
+color:white;
+text-decoration:none;
+border-radius:12px;
+font-weight:600;
+}
+
+/* ======================
+RECENT ACTIVITY
+====================== */
+
+.activity{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+margin-bottom:30px;
+}
+
+.activity h2{
+margin-bottom:20px;
+}
+
+.activity ul{
+list-style:none;
+}
+
+.activity li{
+padding:15px 0;
+border-bottom:1px solid #f1f5f9;
+color:#64748b;
+}
+
+/* ======================
+FOOTER
+====================== */
+
+.footer{
+background:white;
+padding:20px;
+text-align:center;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.04);
+color:#64748b;
+}
+
+/* ======================
+RESPONSIVE
+====================== */
+
+@media(max-width:1200px){
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.quick-actions{
+grid-template-columns:repeat(2,1fr);
+}
+
+.feature-grid{
+grid-template-columns:1fr;
+}
+}
+
+@media(max-width:768px){
+
+.stats{
+grid-template-columns:1fr;
+}
+
+.quick-actions{
+grid-template-columns:1fr;
+}
+
+.hero{
+flex-direction:column;
+text-align:center;
+gap:25px;
+}
+
+.hero h1{
+font-size:38px;
+}
+}
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(8px);
+z-index:9999;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+width:95%;
+height:95%;
+background:white;
+border-radius:25px;
+overflow:hidden;
+position:relative;
+animation:popup .3s ease;
+}
+.modal-content iframe{
+    width:100%;
+    height:100%;
+    border:none;
+    overflow:hidden;
+}
+
+.modal-content iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+.close-btn{
+position:absolute;
+top:15px;
+right:20px;
+font-size:35px;
+cursor:pointer;
+z-index:10000;
+color:#555;
+font-weight:bold;
+}
+
+.close-btn:hover{
+color:red;
+}
+
+@keyframes popup{
+from{
+transform:scale(.85);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+
+<div class="logo-area" onclick="toggleSidebar()">
+
+<div class="logo">
+<img src="{% static 'images/va-logo.png' %}" alt="">
+</div>
+
+<div class="logo-text">
+VIANSO AI
+</div>
+
+</div>
+
+<div class="menu">
+
+<a href="#">
+<i class="fas fa-home"></i>
+<span>Dashboard</span>
+</a>
+
+<a href="{% url 'speech_to_text' %}">
+<i class="fas fa-microphone"></i>
+<span>Speech To Text</span>
+</a>
+
+<a href="{% url 'text_to_speech' %}">
+<i class="fas fa-volume-up"></i>
+<span>Text To Speech</span>
+</a>
+
+<a href="{% url 'image_analyzer' %}">
+<i class="fas fa-image"></i>
+<span>Image Analyzer</span>
+</a>
+
+<a href="{% url 'ai_assistant' %}">
+<i class="fas fa-robot"></i>
+<span>AI Assistant</span>
+</a>
+
+<a href="{% url 'settings' %}">
+<i class="fas fa-gear"></i>
+<span>Settings</span>
+</a>
+
+<a href="{% url 'about' %}">
+<i class="fas fa-circle-info"></i>
+<span>About Us</span>
+</a>
+
+</div>
+
+<div class="profile">
+
+<div class="avatar">
+A
+</div>
+
+<div class="profile-info">
+<h4>Admin</h4>
+<p>Dashboard</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div class="welcome">
+<h2>Welcome Back</h2>
+<p>Manage all AI tools from one place</p>
+</div>
+
+<div class="user-menu">
+
+<div class="user-box">
+
+<img src="https://ui-avatars.com/api/?name=Admin">
+
+<span>Admin</span>
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</div>
+
+<div class="dropdown">
+
+<a href="#">Profile</a>
+
+<a href="{% url 'settings' %}">
+Settings
+</a>
+
+<a href="{% url 'login' %}">
+Logout
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+
+<div>
+
+<h1>
+Simplified AI Workspace.
+</h1>
+
+<p>
+Speech-to-Text, Text-to-Speech,
+Image Generation and AI Assistant
+in one modern dashboard.
+</p>
+
+<a href="#"
+class="hero-btn"
+onclick="openModal('aiModal')">
+Open AI Assistant
+</a>
+
+</div>
+
+<div class="hero-icon">
+
+<i class="fas fa-robot"></i>
+
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat-card">
+<i class="fas fa-microphone"></i>
+<h3>Speech Files</h3>
+<h2>12</h2>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-volume-up"></i>
+<h3>Voice Outputs</h3>
+<h2>8</h2>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-image"></i>
+<h3>Images Analyzed</h3>
+<h2>12</h2>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-robot"></i>
+<h3>AI Chats</h3>
+<h2>Out Soon..</h2>
+</div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+
+<div class="quick-actions">
+
+<a href="javascript:void(0)"
+class="action-btn"
+onclick="openModal('speechModal')">
+🎤 Speech To Text
+</a>
+
+<a href="javascript:void(0)"
+class="action-btn"
+onclick="openModal('ttsModal')">
+🔊 Text To Speech
+</a>
+
+<a href="javascript:void(0)"
+class="action-btn"
+onclick="openModal('imageModal')">
+🖼 Image Analyzer
+</a>
+<a href="javascript:void(0)"
+class="action-btn"
+onclick="openModal('aiModal')">
+🤖 AI Assistant
+</a>
+
+</div>
+
+<!-- FEATURES -->
+
+<div class="feature-grid">
+
+<div class="left-panel">
+
+<div class="feature-card">
+
+<div class="feature-left">
+
+<div class="feature-icon">
+<i class="fas fa-microphone"></i>
+</div>
+
+<div class="feature-content">
+
+<h3>Speech To Text</h3>
+
+<p>
+Convert voice recordings into editable text.
+</p>
+
+</div>
+
+</div>
+
+<a href="#"
+class="open-btn"
+onclick="openModal('speechModal')">
+Open
+</a>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-left">
+
+<div class="feature-icon">
+<i class="fas fa-volume-up"></i>
+</div>
+
+<div class="feature-content">
+
+<h3>Text To Speech</h3>
+
+<p>
+Generate realistic AI voice from text.
+</p>
+
+</div>
+
+</div>
+
+<a href="#"
+class="open-btn"
+onclick="openModal('ttsModal')">
+Open
+</a>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-left">
+
+<div class="feature-icon">
+<i class="fas fa-image"></i>
+</div>
+
+<div class="feature-content">
+
+<h3>Image Generation</h3>
+
+<p>
+Create images using AI prompts.
+</p>
+
+</div>
+
+</div>
+
+<a href="#"
+class="open-btn"
+onclick="openModal('imageModal')">
+Open
+</a>
+
+</div>
+
+</div>
+
+<div class="assistant-card">
+
+<h2>
+AI Assistant
+</h2>
+
+<p>
+Chat with AI, summarize documents,
+generate content, answer questions,
+and automate daily tasks.
+</p>
+
+<a href="#"
+class="assistant-btn"
+onclick="openModal('aiModal')">
+Launch Assistant
+</a>
+
+</div>
+
+</div>
+
+<!-- ACTIVITY -->
+
+<div class="activity">
+
+<h2>
+Recent Activity
+</h2>
+
+<ul>
+
+<li>
+🎤 Speech converted successfully.
+</li>
+
+<li>
+🔊 Audio generated from text.
+</li>
+
+<li>
+🖼 New image created.
+</li>
+
+<li>
+🤖 AI assistant session started.
+</li>
+
+<li>
+⚙ Settings updated.
+</li>
+
+</ul>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+© 2026 VIANSO AI |
+Speech To Text |
+Text To Speech |
+Image Generation |
+AI Assistant
+
+</div>
+
+</div>
+
+<script>
+
+function toggleSidebar(){
+
+    const sidebar =
+    document.getElementById("sidebar");
+
+    const main =
+    document.querySelector(".main");
+
+    sidebar.classList.toggle("active");
+
+    if(sidebar.classList.contains("active")){
+
+        main.style.marginLeft="260px";
+
+    }else{
+
+        main.style.marginLeft="80px";
+
+    }
+}
+
+function openModal(id){
+
+    document.getElementById(id)
+    .style.display="flex";
+
+}
+
+function closeModal(id){
+
+    document.getElementById(id)
+    .style.display="none";
+
+}
+
+</script>
+<!-- Speech Modal -->
+
+<div class="modal" id="speechModal">
+
+    <div class="modal-content">
+
+        <span class="close-btn"
+        onclick="closeModal('speechModal')">
+        &times;
+        </span>
+
+        <iframe
+        src="{% url 'speech_to_text' %}">
+        </iframe>
+
+    </div>
+
+</div>
+
+<!-- TTS Modal -->
+
+<div class="modal" id="ttsModal">
+
+    <div class="modal-content">
+
+        <span class="close-btn"
+        onclick="closeModal('ttsModal')">
+        &times;
+        </span>
+
+        <iframe
+        src="{% url 'text_to_speech' %}">
+        </iframe>
+
+    </div>
+
+</div>
+
+<!-- Image Modal -->
+
+<div class="modal" id="imageModal">
+
+    <div class="modal-content">
+
+        <span class="close-btn"
+        onclick="closeModal('imageModal')">
+        &times;
+        </span>
+
+        <iframe
+        src="{% url 'image_analyzer' %}">
+        </iframe>
+
+    </div>
+
+</div>
+
+<!-- AI Assistant Modal -->
+
+<div class="modal" id="aiModal">
+
+    <div class="modal-content">
+
+        <span class="close-btn"
+        onclick="closeModal('aiModal')">
+        &times;
+        </span>
+
+        <iframe
+        src="{% url 'ai_assistant' %}">
+        </iframe>
+
+    </div>
+</div>
+
+</body>
+</html>

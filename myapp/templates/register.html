@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register - Visanso</title>
+<style>
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#020617,#312e81);
+    font-family:Segoe UI,sans-serif;
+}
+
+.box{
+    width:450px;
+    padding:40px;
+    padding-right: 50px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.12);
+    color:white;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    background:#38bdf8;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+a{
+    color:#38bdf8;
+}
+
+.error{color:#ffb4b4;}
+.success{color:#86efac;}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Create Visanso Account</h2>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+        <p class="success">{{ success }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="username" placeholder="Username" required>
+
+        <input type="email" name="email" placeholder="Email" required>
+
+        <input type="password" name="password" placeholder="Password" required>
+
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div class="register">
+    Already have account?
+    <a href="{% url 'login' %}">Login</a>
+</div>
+</div>
+
+</body>
+</html>

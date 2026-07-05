@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Text To Speech</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#1c2b8f,#7b3f8c);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:900px;
+    max-width:100%;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    border-radius:25px;
+    padding:35px;
+    color:white;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    margin-bottom:30px;
+    opacity:0.9;
+}
+
+textarea{
+    width:100%;
+    height:220px;
+    border:none;
+    border-radius:15px;
+    padding:20px;
+    font-size:16px;
+    resize:none;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:20px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+select,
+input[type="range"]{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+}
+
+.counter{
+    text-align:right;
+    margin-top:10px;
+}
+
+.btn{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(to right,#00f5a0,#00d9ff);
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.02);
+}
+
+.loader{
+    display:none;
+    text-align:center;
+    margin-top:20px;
+    font-size:18px;
+}
+
+.audio-section{
+    margin-top:30px;
+}
+
+audio{
+    width:100%;
+}
+
+.download-btn{
+    display:block;
+    text-align:center;
+    margin-top:15px;
+    padding:12px;
+    text-decoration:none;
+    color:black;
+    font-weight:bold;
+    background:#00f5a0;
+    border-radius:20px;
+}
+
+.speed-text{
+    margin-top:8px;
+}
+
+@media(max-width:700px){
+    .options{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🎙 AI Text To Speech</h1>
+
+    <p class="subtitle">
+        Convert Text into Speech.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <textarea
+            name="text"
+            id="textInput"
+            placeholder="Enter text here..."
+            required></textarea>
+
+        <div class="counter">
+            Characters: <span id="count">0</span>
+        </div>
+
+        <div class="options">
+
+            <div>
+                <label>Voice (English Only)</label>
+
+                <select name="voice">
+                    <option value="autumn">Autumn</option>
+                    <option value="diana">Diana</option>
+                    <option value="hannah">Hannah</option>
+                    <option value="austin">Austin</option>
+                    <option value="daniel">Daniel</option>
+                    <option value="troy">Troy</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Speed</label>
+
+                <input
+                    type="range"
+                    name="speed"
+                    id="speed"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value="1">
+
+                <div class="speed-text">
+                    Speed: <span id="speedValue">1.0x</span>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="btn" type="submit">
+            Generate Speech
+        </button>
+
+    </form>
+
+    <div class="loader" id="loader">
+        ⏳ Generating Audio...
+    </div>
+
+    {% if audio_file %}
+    <div class="audio-section">
+
+        <h3>Generated Audio</h3>
+
+        <audio controls>
+            <source src="{{ audio_file }}">
+            Your browser does not support audio.
+        </audio>
+
+        <a href="{{ audio_file }}"
+           download
+           class="download-btn">
+            Download Audio
+        </a>
+
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+
+const textInput = document.getElementById("textInput");
+const count = document.getElementById("count");
+
+textInput.addEventListener("input", () => {
+    count.textContent = textInput.value.length;
+});
+
+const speedSlider = document.getElementById("speed");
+const speedValue = document.getElementById("speedValue");
+
+speedSlider.addEventListener("input", () => {
+    speedValue.textContent = speedSlider.value + "x";
+});
+
+document.querySelector("form").addEventListener("submit", () => {
+    document.getElementById("loader").style.display = "block";
+});
+
+</script>
+
+</body>
+</html>
+
